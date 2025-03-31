@@ -7,8 +7,7 @@ import { PrismaService } from 'src/database/prisma.service';
 export class QuestionsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createQuestionDto: CreateQuestionDto) {
-    const user_id = 3;
+  async create(createQuestionDto: CreateQuestionDto, user_id: number) {
     return await this.prisma.questions.create({
       data: { ...createQuestionDto, user_id },
     });

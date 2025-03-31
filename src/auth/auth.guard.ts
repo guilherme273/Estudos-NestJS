@@ -28,7 +28,7 @@ export class AuthGuard implements CanActivate {
         secret: process.env.tokenJWT,
       });
 
-      request.user_id = payload;
+      request.token = payload;
     } catch {
       throw new UnauthorizedException('Inalid Token');
     }

@@ -14,12 +14,29 @@ export class UserService {
     });
   }
 
+  async getAllUsers() {
+    const users = await this.prisma.user.findMany({
+      include: {
+        answers: true,
+        questions: true,
+      },
+    });
+    return users.map(({ password, ...user }) => user);
+  }
+
   async getUser(
     userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
-    return this.prisma.user.findUnique({
+  ): Promise<Omit<User, 'password'> | null> {
+    const user = await this.prisma.user.findUnique({
       where: userWhereUniqueInput,
+      include: {
+        answers: true,
+        questions: true,
+      },
     });
+    if (!user) return null;
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   async updateUser(params: {
