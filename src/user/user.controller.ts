@@ -4,13 +4,17 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Prisma, User as UserModel } from '@prisma/client';
+import { User as UserModel } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { CreateUserDto } from './dto/create-user-dto';
+import { UpdateUserDto } from './dto/update-user-dto';
 
 @Controller('user')
 export class UserController {
@@ -18,7 +22,7 @@ export class UserController {
 
   @Post()
   async signupUser(
-    @Body() userData: Prisma.UserCreateInput,
+    @Body(new ValidationPipe()) userData: CreateUserDto,
   ): Promise<UserModel> {
     return this.userService.createUser(userData);
   }
@@ -40,16 +44,16 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Patch(':id')
   async updateUser(
-    @Param('id') id: string,
-    @Body() userData: Prisma.UserUpdateInput,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() userData: UpdateUserDto,
   ): Promise<UserModel> {
-    const params = { where: { id: Number(id) }, data: userData };
+    const params = { where: { id }, data: userData };
     return this.userService.updateUser(params);
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  async deleteUser(@Param('id') id: string): Promise<UserModel> {
-    return this.userService.deleteUser({ id: Number(id) });
+  async deleteUser(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
+    return this.userService.deleteUser({ id });
   }
 }

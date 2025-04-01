@@ -23,11 +23,32 @@ export class AnswersService {
   }
 
   async findAll() {
-    return await this.prisma.answers.findMany();
+    return await this.prisma.answers.findMany({
+      include: {
+        user: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+        questions: true,
+      },
+    });
   }
 
   async findOne(id: number) {
-    return await this.prisma.answers.findUnique({ where: { id } });
+    return await this.prisma.answers.findUnique({
+      where: { id },
+      include: {
+        user: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+        questions: true,
+      },
+    });
   }
 
   async update(id: number, updateAnswerDto: UpdateAnswerDto) {

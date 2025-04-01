@@ -14,11 +14,32 @@ export class QuestionsService {
   }
 
   async findAll() {
-    return this.prisma.questions.findMany();
+    return this.prisma.questions.findMany({
+      include: {
+        user: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+        answers: true,
+      },
+    });
   }
 
   async findOne(id: number) {
-    return await this.prisma.questions.findUnique({ where: { id: id } });
+    return await this.prisma.questions.findUnique({
+      where: { id: id },
+      include: {
+        user: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+        answers: true,
+      },
+    });
   }
 
   async update(id: number, updateQuestionDto: UpdateQuestionDto) {
